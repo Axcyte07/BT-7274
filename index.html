@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Genshin kvíz – Mennyire vagy Traveler?</title>
+<title>Genshin kvíz – Mennyire vagy élettelen?</title>
 <meta name="theme-color" content="#dff5f1">
 <style>
 :root{
@@ -62,8 +62,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 <section id="start" class="card hero">
   <div class="big">🌪️</div>
-  <h1>Mennyire vagy te igazi Traveler?</h1>
-  <p class="sub">8 kérdés, nulla mora jutalom. Paimon viszont kommentál, akár kéred, akár nem.</p>
+  <h1>Mennyire vagy te élettelen?</h1>
+  <p class="sub">8 kérdés, nulla mora jutalom. Paimon viszont pofázik, akár kéred, akár nem.</p>
   <button class="go" id="startBtn">Irány Teyvat!</button>
 </section>
 
@@ -93,35 +93,35 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 <script>
 const QS=[
  {q:"Mi az a dolog, ami miatt nem tudsz egész nap grindolni, bármennyire is szeretnél?",
-  a:["Original Resin","A főnököd","A tolóajtós szekrény","A realitás"],c:0,
+  a:["Original Resin","A beadandók","Az akkumulátor","A valóság"],c:0,
   ok:"Pontosan. A Resin az igazi végső boss. 💤",
   no:"Hát nem. A válasz a Resin. Megint kifogytál belőle, ugye?"},
  {q:"Hány wish után garantált az 5 csillagos karakter a hard pitynél?",
-  a:["30","90","Soha, mert nálam a 50/50 mindig elbukik","9999"],c:1,
+  a:["Mi az a wish?","90","Soha, mert nálam a 50/50 mindig elbukik","9999"],c:1,
   ok:"90! Ha 89-nél kaptad meg, akkor is csak a 90-et jegyezd meg.",
-  no:"A hard pity 90. A harmadik opció érzelmileg viszont teljesen érthető."},
+  no:"A hard pity 90. A többi opció érzelmileg viszont teljesen érthető."},
  {q:"Ki a valódi Anemo Archon, Mondstadt védelmezője?",
-  a:["Jean","Dvalin","Venti, a bárd","Paimon (titkos kiadás)"],c:2,
-  ok:"Venti! A szabadság istene, aki szívesen dalol és még szívesebben iszik. 🍎",
-  no:"Venti az. Az, aki úgy néz ki, mint egy fiatal bárd, de valójában Barbatos."},
+  a:["Jean","Dvalin","Venti","Paimon (titkos kiadás)"],c:2,
+  ok:"Venti! A lustaság istene, aki szívesen szívat, de még szívesebben iszik. 🍎",
+  no:"Venti az. Az, aki úgy néz ki, mint egy femboy, de valójában egy sárkány, teljesen logikus."},
  {q:"Mi Zhongli leghíresebb 'szokása' vásárlás közben?",
-  a:["Mindig alkudozik","Otthon felejti a Morát","Csak Teát vesz","Kreditkártyával fizet"],c:1,
-  ok:"Igen! Az Archon, aki a szerződések istene, de a pénztárcáját nem találja. 😅",
+  a:["Mindig alkudozik ✡️","Otthon felejti a zsét","Csak Teát vesz 🧋","Kreditkártyával fizet 💳"],c:1,
+  ok:"Igen! Az Archon, aki a szerződések istene, de a pénztárcáját nem találja. Hiteles Tel Aviv lakos",
   no:"Otthon felejti a Morát. Persze a Wangsheng Funeral Parlor csak úgy kifizeti."},
  {q:"Mivel foglalkozik Klee a legszívesebben?",
-  a:["Süteményt süt","Halakat robbant","Verseket ír","Adót könyvel"],c:1,
+  a:["Süteményt süt","Halakat robbant","Adót csal","Adót könyvel"],c:1,
   ok:"Halat robbant! Jean csendesen sóhajt a háttérben. 💥",
-  no:"Halakat robbant. Jean a szobában ül, és ezt sosem fogja megszokni."},
+  no:"Halakat robbant. Jean pedig örökké tehetetlenül fogja viselni."},
  {q:"Hogy hívják azt a kontinenst, ahol a játék játszódik?",
-  a:["Tevyat... vagy Teyvat?","Teyvat","Mondstadt","Genshinland"],c:1,
-  ok:"Teyvat! (A válasz 1 is jó lehetett volna, de elírás, szóval kedves.)",
-  no:"Teyvat. Mondstadt csak egy város, nem az egész világ. Még."},
+  a:["Agartha 🗿","Teyvat","Sohaország","Genshinland"],c:1,
+  ok:"Teyvat! Bár kinek mi...",
+  no:"Muszáj volt egy jó választ bejelölnöm, nem jött össze."},
  {q:"Ki Traveler testvére, akit az ismeretlen isten elragadott?",
   a:["Aether vagy Lumine","Childe","Dainsleif","Paimon bátyja"],c:0,
   ok:"Igen! Aether vagy Lumine, aszerint, melyiket választottad. 👯",
-  no:"A testvéred Aether vagy Lumine. Ha ezt nem tudtad, a tutorial azért van."},
- {q:"Mit hívnak Paimon úgy, hogy 'Emergency ...'?",
-  a:["Pet","Food","Weapon","Power"],c:1,
+  no:"A testvéred Aether vagy Lumine. Ha ezt nem tudtad, a tutorial azért van. Kezdd elölről az egész gamet"},
+ {q:"Hogy hívják a repülő kis genyót másnéven, 'Emergency ...'?",
+  a:["Pet","Food","Weapon","glass breaking hammer"],c:1,
   ok:"Emergency Food! Tudjuk, hogy te is így hívod. 🍖",
   no:"Emergency Food. Paimon ezt sosem bocsátja meg neked."}
 ];
@@ -129,8 +129,8 @@ const RANKS=[
  [0,"🥚","Eltévedt Hilichurl","Még a tutorialt sem fejezted be. Paimon aggódik érted, és egy kicsit az Emergency Food miatt is."],
  [3,"🧭","Kezdő Adventurer","Már tudod, hol a Teleport Waypoint, de még nem érted a Resin rendszert. Sebaj, ez egy hosszú út."],
  [5,"⚔️","Tapasztalt Traveler","Csinálod a napi commissionöket, és legalább 3 karaktert maxoltál. Gratulálunk, szociális életed nincs."],
- [7,"🌟","Archon-barát","Mindent tudsz Teyvatról. A Fatui már követ téged, Paimon pedig szerződést ajánl."],
- [8,"👑","Teyvat Legendája","Tökéletes pontszám! Paimon azt mondja, te vagy a legjobb útitárs. Köszi, hogy eltűrted az Emergency Food-os vicceket!"]
+ [7,"🌟","Archon","Mindent tudsz Teyvatról. A Fatui már követ téged, Netanyahu pedig már hívogat."],
+ [8,"👑","Teyvat Legendája","Tökéletes pontszám! Jól vagy? nem kell orvos?"]
 ];
 const $=id=>document.getElementById(id);
 let i=0,pts=0,done=false;
