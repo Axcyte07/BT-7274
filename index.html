@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Genshin kvíz – Mennyire vagy Traveler?</title>
+<meta name="theme-color" content="#dff5f1">
+<style>
+:root{
+  --bg:#dff5f1; --card:#ffffff; --ink:#1d2b4a; --soft:#5b6b8a;
+  --gold:#e0a526; --ok:#3f9b4a; --bad:#d9503c; --line:#b9dcd6;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#14213d; --card:#1d2d52; --ink:#eef4ff; --soft:#9fb2d6; --line:#2e4274;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.45;
+  padding:max(16px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));
+  display:flex;justify-content:center;
+}
+main{width:100%;max-width:560px}
+h1,h2{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,9vw,2.8rem)}
+h2{font-size:1.35rem}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px;margin-top:14px}
+.hero{text-align:center;padding-top:28px}
+.sub{color:var(--soft);margin:10px 0 22px}
+button{
+  font:inherit;color:inherit;cursor:pointer;width:100%;text-align:left;
+  background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin-top:10px;min-height:52px;transition:transform .08s,border-color .15s,background .15s;
+}
+button:active{transform:scale(.98)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (hover:hover){button:not(:disabled):hover{border-color:var(--gold)}}
+.go{background:var(--gold);color:#2b1d00;border-color:var(--gold);font-weight:700;text-align:center;font-size:1.1rem}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.meta{display:flex;justify-content:space-between;color:var(--soft);font-size:.9rem;margin-bottom:8px}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+.bubble{
+  margin-top:16px;padding:12px 14px;border-radius:16px 16px 16px 4px;
+  background:var(--bg);border:2px solid var(--line);animation:pop .2s ease-out;
+}
+.bubble b{color:var(--gold)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.big{font-size:4rem;text-align:center;margin:6px 0}
+.score{text-align:center;color:var(--soft);margin:4px 0 12px}
+.hide{display:none}
+.row{display:flex;gap:10px}.row button{text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main>
+
+<section id="start" class="card hero">
+  <div class="big">🌪️</div>
+  <h1>Mennyire vagy te igazi Traveler?</h1>
+  <p class="sub">8 kérdés, nulla mora jutalom. Paimon viszont kommentál, akár kéred, akár nem.</p>
+  <button class="go" id="startBtn">Irány Teyvat!</button>
+</section>
+
+<section id="quiz" class="hide">
+  <div class="meta"><span id="qn"></span><span id="pts"></span></div>
+  <div class="bar"><i id="fill"></i></div>
+  <div class="card">
+    <h2 id="q"></h2>
+    <div id="opts"></div>
+    <div id="fb" class="bubble hide"></div>
+    <button class="go hide" id="next"></button>
+  </div>
+</section>
+
+<section id="end" class="card hide">
+  <div class="big" id="emoji"></div>
+  <h2 id="rank" style="text-align:center"></h2>
+  <p class="score" id="score"></p>
+  <p id="desc" style="text-align:center"></p>
+  <div class="row">
+    <button id="share">📋 Megosztás</button>
+    <button class="go" id="again">Újra!</button>
+  </div>
+</section>
+
+</main>
+<script>
+const QS=[
+ {q:"Mi az a dolog, ami miatt nem tudsz egész nap grindolni, bármennyire is szeretnél?",
+  a:["Original Resin","A főnököd","A tolóajtós szekrény","A realitás"],c:0,
+  ok:"Pontosan. A Resin az igazi végső boss. 💤",
+  no:"Hát nem. A válasz a Resin. Megint kifogytál belőle, ugye?"},
+ {q:"Hány wish után garantált az 5 csillagos karakter a hard pitynél?",
+  a:["30","90","Soha, mert nálam a 50/50 mindig elbukik","9999"],c:1,
+  ok:"90! Ha 89-nél kaptad meg, akkor is csak a 90-et jegyezd meg.",
+  no:"A hard pity 90. A harmadik opció érzelmileg viszont teljesen érthető."},
+ {q:"Ki a valódi Anemo Archon, Mondstadt védelmezője?",
+  a:["Jean","Dvalin","Venti, a bárd","Paimon (titkos kiadás)"],c:2,
+  ok:"Venti! A szabadság istene, aki szívesen dalol és még szívesebben iszik. 🍎",
+  no:"Venti az. Az, aki úgy néz ki, mint egy fiatal bárd, de valójában Barbatos."},
+ {q:"Mi Zhongli leghíresebb 'szokása' vásárlás közben?",
+  a:["Mindig alkudozik","Otthon felejti a Morát","Csak Teát vesz","Kreditkártyával fizet"],c:1,
+  ok:"Igen! Az Archon, aki a szerződések istene, de a pénztárcáját nem találja. 😅",
+  no:"Otthon felejti a Morát. Persze a Wangsheng Funeral Parlor csak úgy kifizeti."},
+ {q:"Mivel foglalkozik Klee a legszívesebben?",
+  a:["Süteményt süt","Halakat robbant","Verseket ír","Adót könyvel"],c:1,
+  ok:"Halat robbant! Jean csendesen sóhajt a háttérben. 💥",
+  no:"Halakat robbant. Jean a szobában ül, és ezt sosem fogja megszokni."},
+ {q:"Hogy hívják azt a kontinenst, ahol a játék játszódik?",
+  a:["Tevyat... vagy Teyvat?","Teyvat","Mondstadt","Genshinland"],c:1,
+  ok:"Teyvat! (A válasz 1 is jó lehetett volna, de elírás, szóval kedves.)",
+  no:"Teyvat. Mondstadt csak egy város, nem az egész világ. Még."},
+ {q:"Ki Traveler testvére, akit az ismeretlen isten elragadott?",
+  a:["Aether vagy Lumine","Childe","Dainsleif","Paimon bátyja"],c:0,
+  ok:"Igen! Aether vagy Lumine, aszerint, melyiket választottad. 👯",
+  no:"A testvéred Aether vagy Lumine. Ha ezt nem tudtad, a tutorial azért van."},
+ {q:"Mit hívnak Paimon úgy, hogy 'Emergency ...'?",
+  a:["Pet","Food","Weapon","Power"],c:1,
+  ok:"Emergency Food! Tudjuk, hogy te is így hívod. 🍖",
+  no:"Emergency Food. Paimon ezt sosem bocsátja meg neked."}
+];
+const RANKS=[
+ [0,"🥚","Eltévedt Hilichurl","Még a tutorialt sem fejezted be. Paimon aggódik érted, és egy kicsit az Emergency Food miatt is."],
+ [3,"🧭","Kezdő Adventurer","Már tudod, hol a Teleport Waypoint, de még nem érted a Resin rendszert. Sebaj, ez egy hosszú út."],
+ [5,"⚔️","Tapasztalt Traveler","Csinálod a napi commissionöket, és legalább 3 karaktert maxoltál. Gratulálunk, szociális életed nincs."],
+ [7,"🌟","Archon-barát","Mindent tudsz Teyvatról. A Fatui már követ téged, Paimon pedig szerződést ajánl."],
+ [8,"👑","Teyvat Legendája","Tökéletes pontszám! Paimon azt mondja, te vagy a legjobb útitárs. Köszi, hogy eltűrted az Emergency Food-os vicceket!"]
+];
+const $=id=>document.getElementById(id);
+let i=0,pts=0,done=false;
+
+function show(id){["start","quiz","end"].forEach(s=>$(s).classList.toggle("hide",s!==id));window.scrollTo(0,0)}
+function shuffle(a){a=a.map((t,k)=>({t,k}));for(let n=a.length-1;n>0;n--){const m=Math.floor(Math.random()*(n+1));[a[n],a[m]]=[a[m],a[n]]}return a}
+
+function render(){
+  done=false;const Q=QS[i];
+  $("qn").textContent="Kérdés "+(i+1)+"/"+QS.length;
+  $("pts").textContent="⭐ "+pts;
+  $("fill").style.width=(i/QS.length*100)+"%";
+  $("q").textContent=Q.q;
+  $("fb").classList.add("hide");$("next").classList.add("hide");
+  const box=$("opts");box.innerHTML="";
+  shuffle(Q.a).forEach(o=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=o.t;
+    b.onclick=()=>answer(b,o.k===Q.c);box.appendChild(b);
+  });
+}
+function answer(btn,right){
+  if(done)return;done=true;const Q=QS[i];
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.textContent===Q.a[Q.c])b.classList.add("ok")});
+  if(right){pts++;}else btn.classList.add("bad");
+  $("pts").textContent="⭐ "+pts;
+  $("fb").innerHTML="<b>Paimon:</b> "+(right?Q.ok:Q.no);$("fb").classList.remove("hide");
+  const n=$("next");n.textContent=i===QS.length-1?"Eredmény!":"Tovább";n.classList.remove("hide");
+  n.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function finish(){
+  $("fill").style.width="100%";
+  let r=RANKS[0];RANKS.forEach(x=>{if(pts>=x[0])r=x});
+  $("emoji").textContent=r[1];$("rank").textContent=r[2];
+  $("score").textContent=pts+" / "+QS.length+" pont";$("desc").textContent=r[3];
+  show("end");
+}
+$("startBtn").onclick=()=>{i=0;pts=0;show("quiz");render()};
+$("next").onclick=()=>{i++;i<QS.length?render():finish()};
+$("again").onclick=()=>{i=0;pts=0;show("quiz");render()};
+$("share").onclick=async()=>{
+  const t="Genshin kvízben "+pts+"/"+QS.length+" pontot értem el: "+$("rank").textContent+" "+$("emoji").textContent+" – Te mennyit tudsz?";
+  try{
+    if(navigator.share){await navigator.share({text:t,url:location.href})}
+    else{await navigator.clipboard.writeText(t+" "+location.href);$("share").textContent="✅ Kimásolva!"}
+  }catch(e){}
+};
+</script>
+</body>
+</html>
